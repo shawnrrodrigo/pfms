@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Income List</title>
+</head>
+<body>
+<h1>Incomes</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Source</th>
+        <th>Amount</th>
+        <th>Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="income : ${incomes}">
+        <td th:text="${income.source}"></td>
+        <td th:text="${income.amount}"></td>
+        <td th:text="${income.date}"></td>
+    </tr>
+    </tbody>
+</table>
+<a href="/incomes/new">Add New Income</a>
+</body>
+</html>

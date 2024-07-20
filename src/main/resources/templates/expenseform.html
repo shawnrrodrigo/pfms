@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Add Expense</title>
+</head>
+<body>
+<h1>Add Expense</h1>
+<form th:action="@{/expenses}" method="post">
+  <div>
+    <label for="category">Category:</label>
+    <input type="text" id="category" name="category"/>
+  </div>
+  <div>
+    <label for="amount">Amount:</label>
+    <input type="number" id="amount" name="amount"/>
+  </div>
+  <div>
+    <label for="date">Date:</label>
+    <input type="date" id="date" name="date"/>
+  </div>
+  <div>
+    <button type="submit">Add Expense</button>
+  </div>
+</form>
+</body>
+</html>

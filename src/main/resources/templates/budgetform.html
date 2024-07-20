@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Budget Form</title>
+</head>
+<body>
+<form th:action="@{/budgets}" th:object="${budget}" method="post">
+    <label for="category">Category:</label>
+    <input type="text" id="category" th:field="*{category}" />
+
+    <label for="limit">Limit:</label>
+    <input type="text" id="limit" th:field="*{limit}" />
+
+    <label for="startDate">Start Date:</label>
+    <input type="date" id="startDate" th:field="*{startDate}" />
+
+    <label for="endDate">End Date:</label>
+    <input type="date" id="endDate" th:field="*{endDate}" />
+
+    <button type="submit">Save</button>
+</form>
+</body>
+</html>
