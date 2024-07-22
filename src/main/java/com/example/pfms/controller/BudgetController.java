@@ -3,10 +3,14 @@ package com.example.pfms.controller;
 import com.example.pfms.model.Budget;
 import com.example.pfms.model.Expense;
 import com.example.pfms.model.Income;
-import com.example.pfms.service.BudgetServiceImpl;
-import com.example.pfms.service.ExpenseServiceImpl;
-import com.example.pfms.service.IncomeServiceImpl;
+import com.example.pfms.request.BudgetRequestDTO;
+import com.example.pfms.response.BudgetResponseDTO;
+import com.example.pfms.response.UserResponseDTO;
+import com.example.pfms.security.UserDetailsImpl;
+import com.example.pfms.service.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,22 +20,24 @@ import java.util.List;
 @RequestMapping("/api/budgets")
 public class BudgetController {
     @Autowired
-    private BudgetServiceImpl budgetService;
+    private BudgetService budgetService;
 
     @Autowired
-    private IncomeServiceImpl incomeService;
+    private IncomeService incomeService;
 
     @Autowired
-    private ExpenseServiceImpl expenseService;
+    private ExpenseService expenseService;
 
     @PostMapping
-    public Budget createBudget(@RequestBody Budget budget) {
-        return budgetService.saveBudget(budget);
+    public BudgetResponseDTO createBudget(@RequestBody BudgetRequestDTO budgetRequestDTO, Authentication authentication) {
+        Long userId = ((UserDetailsImpl) authentication.getPrincipal()).getId();
+        return budgetService.createBudget(budgetRequestDTO, userId);
     }
 
     @GetMapping
-    public List<Budget> getAllBudgets() {
-        return budgetService.getAllBudgets();
+    public List<BudgetResponseDTO> getAllBudgets(Authentication authentication) {
+        Long userId = ((UserDetailsImpl) authentication.getPrincipal()).getId();
+        return budgetService.getAllBudgets(userId);
     }
 
 //    @GetMapping("/reports")
@@ -48,18 +54,23 @@ public class BudgetController {
 
 
     @GetMapping("/{id}")
-    public Budget getBudgetById(@PathVariable Long id) {
-        return budgetService.findById(id);
+    public BudgetResponseDTO getBudgetById(@PathVariable Long id) {
+        Budget budget = budgetService.findById(id);
+        BudgetResponseDTO budgetResponseDTO = new BudgetResponseDTO();
+        UserResponseDTO userResponseDTO = new UserResponseDTO();
+        userResponseDTO.setId(budget.getUser().getId());
+        userResponseDTO.setName(budget.getUser().getName());
+        userResponseDTO.setEmail(budget.getUser().getEmail());
+        BeanUtils.copyProperties(budget, budgetResponseDTO);
+        budgetResponseDTO.setUserResponseDTO(userResponseDTO);
+        return budgetResponseDTO;
     }
 
     @PutMapping("/{id}")
-    public Budget updateBudget(@PathVariable Long id, @RequestBody Budget budget) {
-        Budget existingBudget = budgetService.findById(id);
-        existingBudget.setCategory(budget.getCategory());
-        existingBudget.setLimit(budget.getLimit());
-        existingBudget.setStartDate(budget.getStartDate());
-        existingBudget.setEndDate(budget.getEndDate());
-        return budgetService.saveBudget(existingBudget);
+    public BudgetResponseDTO updateBudget(@PathVariable Long id, @RequestBody BudgetRequestDTO budgetRequestDTO, Authentication authentication) {
+        Long userId = ((UserDetailsImpl) authentication.getPrincipal()).getId();
+        budgetRequestDTO.setUserId(userId);
+        return budgetService.updateBudget(id, budgetRequestDTO);
     }
 
     @DeleteMapping("/{id}")

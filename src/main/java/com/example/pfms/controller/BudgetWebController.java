@@ -15,11 +15,11 @@ public class BudgetWebController {
     @Autowired
     private BudgetServiceImpl budgetService;
 
-    @GetMapping
-    public String showBudgets(Model model) {
-        model.addAttribute("budgets", budgetService.getAllBudgets());
-        return "budgets";
-    }
+//    @GetMapping
+//    public String showBudgets(Model model) {
+//        model.addAttribute("budgets", budgetService.getAllBudgets());
+//        return "budgets";
+//    }
 
     @GetMapping("/new")
     public String showBudgetForm(Model model) {
