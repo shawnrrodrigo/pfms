@@ -24,25 +24,11 @@ public class IncomeController {
     @Autowired
     private IncomeService incomeService;
 
-    @Autowired
-    private UserService userService;
-
     @GetMapping
     public List<IncomeResponseDTO> getAllIncomes(Authentication authentication) {
         Long id = ((UserDetailsImpl)authentication.getPrincipal()).getId();
-        List<Income> incomeList =  incomeService.getAllIncomes(id);
-        return incomeList.stream()
-                .map(income -> {
-                    IncomeResponseDTO incomeResponseDTO = new IncomeResponseDTO();
-                    UserResponseDTO userResponseDTO = new UserResponseDTO();
-                    BeanUtils.copyProperties(incomeList, incomeResponseDTO);
-                    userResponseDTO.setName(income.getUser().getName());
-                    userResponseDTO.setEmail(income.getUser().getEmail());
-                    userResponseDTO.setId(income.getUser().getId());
-                    incomeResponseDTO.setUserResponseDTO(userResponseDTO);
-                    return incomeResponseDTO;
-                }).toList();
 
+        return incomeService.getAllIncomes(id);
     }
 
     @GetMapping("/{id}")
@@ -59,17 +45,13 @@ public class IncomeController {
     }
 
     @PostMapping
-    public Income createIncome(@RequestBody IncomeRequestDTO incomeRequestDTO, Authentication authentication) {
-        Income income = new Income();
-        BeanUtils.copyProperties(incomeRequestDTO, income);
+    public IncomeResponseDTO createIncome(@RequestBody IncomeRequestDTO incomeRequestDTO, Authentication authentication) {
         Long userId = ((UserDetailsImpl) authentication.getPrincipal()).getId();
-        User user = userService.findById(userId);
-        income.setUser(user);
-        return incomeService.saveIncome(income);
+        return incomeService.createIncome(incomeRequestDTO, userId);
     }
 
     @PutMapping("/{id}")
-    public Income updateIncome(@PathVariable Long id, @RequestBody IncomeRequestDTO incomeRequestDTO, Authentication authentication) {
+    public IncomeResponseDTO updateIncome(@PathVariable Long id, @RequestBody IncomeRequestDTO incomeRequestDTO, Authentication authentication) {
         Long userId = ((UserDetailsImpl) authentication.getPrincipal()).getId();
         incomeRequestDTO.setUserId(userId);
         return incomeService.updateIncome(id, incomeRequestDTO);

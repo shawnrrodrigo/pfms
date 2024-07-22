@@ -30,18 +30,7 @@ public class ExpenseController {
     @GetMapping
     public List<ExpenseResponseDTO> getAllExpenses(Authentication authentication) {
         Long id = ((UserDetailsImpl)authentication.getPrincipal()).getId();
-        List<Expense> expenseList =  expenseService.getAllExpenses(id);
-        return expenseList.stream()
-                .map(expense -> {
-                    ExpenseResponseDTO expenseResponseDTO = new ExpenseResponseDTO();
-                    UserResponseDTO userResponseDTO = new UserResponseDTO();
-                    BeanUtils.copyProperties(expenseList, expenseResponseDTO);
-                    userResponseDTO.setName(expense.getUser().getName());
-                    userResponseDTO.setEmail(expense.getUser().getEmail());
-                    userResponseDTO.setId(expense.getUser().getId());
-                    expenseResponseDTO.setUserResponseDTO(userResponseDTO);
-                    return expenseResponseDTO;
-                }).toList();
+        return expenseService.getAllExpenses(id);
     }
 
     @GetMapping("/{id}")
@@ -58,20 +47,16 @@ public class ExpenseController {
     }
 
     @PostMapping
-    public Expense createExpense(@RequestBody ExpenseRequestDTO expenseRequestDTO, Authentication authentication) {
-        Expense expense = new Expense();
-        BeanUtils.copyProperties(expenseRequestDTO, expense);
+    public ExpenseResponseDTO createExpense(@RequestBody ExpenseRequestDTO expenseRequestDTO, Authentication authentication) {
         Long userId = ((UserDetailsImpl) authentication.getPrincipal()).getId();
-        User user = userService.findById(userId);
-        expense.setUser(user);
-        return expenseService.saveExpense(expense);
+        return expenseService.createExpense(expenseRequestDTO, userId);
     }
 
     @PutMapping("/{id}")
-    public Expense updateExpense(@PathVariable Long id, @RequestBody ExpenseRequestDTO expenseRequestDTO, Authentication authentication) {
+    public ExpenseResponseDTO updateExpense(@PathVariable Long id, @RequestBody ExpenseRequestDTO expenseRequestDTO, Authentication authentication) {
         Long userId = ((UserDetailsImpl) authentication.getPrincipal()).getId();
         expenseRequestDTO.setUserId(userId);
-        return expenseService.updateIncome(id, expenseRequestDTO);
+        return expenseService.updateExpense(id, expenseRequestDTO);
     }
 
     @DeleteMapping("/{id}")
