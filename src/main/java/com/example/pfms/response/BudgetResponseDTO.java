@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public class BudgetResponseDTO {
     private Long id;
     private String category;
-    private double limit;
+    private double limitAmount;
     private LocalDate startDate;
     private LocalDate endDate;
     private UserResponseDTO userResponseDTO;

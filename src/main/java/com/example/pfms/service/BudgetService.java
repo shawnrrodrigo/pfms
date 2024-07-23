@@ -17,4 +17,6 @@ public interface BudgetService {
     BudgetResponseDTO createBudget(BudgetRequestDTO budgetRequestDTO, Long userId);
 
     BudgetResponseDTO updateBudget(Long id, BudgetRequestDTO budgetRequestDTO);
+
+    Double getBudgetSpending(Long id);
 }

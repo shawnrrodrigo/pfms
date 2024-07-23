@@ -66,12 +66,12 @@ public class IncomeServiceImpl implements IncomeService{
             income.setAmount(incomeRequestDTO.getAmount());
         }
 
-        if(!income.getSource().equals(incomeRequestDTO.getSource())){
+        if(incomeRequestDTO.getSource() != null && !income.getSource().equals(incomeRequestDTO.getSource())){
             income.setSource(incomeRequestDTO.getSource());
         }
 
         LocalDate today = LocalDate.now();
-        if (!income.getDate().equals(incomeRequestDTO.getDate())) {
+        if (incomeRequestDTO.getDate() != null && !income.getDate().equals(incomeRequestDTO.getDate())) {
             if (incomeRequestDTO.getDate().isAfter(today)) {
                 throw new OperationNotAllowedException("Date cannot be in the future", HttpStatus.BAD_REQUEST.value());
             }
@@ -109,9 +109,14 @@ public class IncomeServiceImpl implements IncomeService{
 
         LocalDate today = LocalDate.now();
 
+        if(incomeRequestDTO.getDate() == null){
+            throw new OperationNotAllowedException("Date cannot be null", HttpStatus.BAD_REQUEST.value());
+        }
+
         if (incomeRequestDTO.getDate().isAfter(today)) {
             throw new OperationNotAllowedException("Date cannot be in the future", HttpStatus.BAD_REQUEST.value());
         }
+
         BeanUtils.copyProperties(incomeRequestDTO, income);
         User user = userService.findById(userId);
         income.setUser(user);

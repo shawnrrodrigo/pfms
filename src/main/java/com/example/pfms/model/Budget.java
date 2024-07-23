@@ -13,7 +13,7 @@ public class Budget {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String category;
-    private double limit;
+    private double limitAmount;
     private LocalDate startDate;
     private LocalDate endDate;
     @ManyToOne

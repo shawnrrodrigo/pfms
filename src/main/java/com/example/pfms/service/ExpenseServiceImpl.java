@@ -120,4 +120,8 @@ public class ExpenseServiceImpl implements ExpenseService{
         expenseResponseDTO.setUserResponseDTO(userResponseDTO);
         return expenseResponseDTO;
     }
+
+    public List<Expense> getExpensesByCategoryAndDateRange(User user, String category, LocalDate startDate, LocalDate endDate) {
+        return expenseRepository.findByUserAndCategoryAndDateBetween(user, category, startDate, endDate);
+    }
 }
