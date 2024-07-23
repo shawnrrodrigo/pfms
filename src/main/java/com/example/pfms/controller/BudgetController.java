@@ -73,6 +73,11 @@ public class BudgetController {
         return budgetService.updateBudget(id, budgetRequestDTO);
     }
 
+    @GetMapping("/{id}/spending")
+    public Double getBudgetSpending(@PathVariable Long id) {
+        return budgetService.getBudgetSpending(id);
+    }
+
     @DeleteMapping("/{id}")
     public void deleteBudget(@PathVariable Long id) {
         budgetService.deleteBudget(id);

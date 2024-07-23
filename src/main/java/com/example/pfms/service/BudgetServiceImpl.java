@@ -80,15 +80,15 @@ public class BudgetServiceImpl implements BudgetService{
         Budget budget = findById(id);
         User user = userService.findById(budgetRequestDTO.getUserId());
 
-        if(budgetRequestDTO.getLimit() <= 0){
+        if(budgetRequestDTO.getLimitAmount() <= 0){
             throw new OperationNotAllowedException("Limit should be greater than zero", HttpStatus.BAD_REQUEST.value());
         }
         if(!budget.getUser().getId().equals(user.getId())){
             throw new OperationNotAllowedException("You don't have access to modify this record", HttpStatus.NOT_FOUND.value());
         }
 
-        if(budget.getLimit() != budgetRequestDTO.getLimit()){
-            budget.setLimit(budgetRequestDTO.getLimit());
+        if(budget.getLimitAmount() != budgetRequestDTO.getLimitAmount()){
+            budget.setLimitAmount(budgetRequestDTO.getLimitAmount());
         }
 
         if(!budget.getCategory().equals(budgetRequestDTO.getCategory())){
@@ -117,5 +117,10 @@ public class BudgetServiceImpl implements BudgetService{
 
         return budgetResponseDTO;
 
+    }
+
+    @Override
+    public Double getBudgetSpending(Long id) {
+        return null;
     }
 }

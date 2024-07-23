@@ -7,7 +7,7 @@ import java.time.LocalDate;
 @Data
 public class BudgetRequestDTO {
     private String category;
-    private double limit;
+    private double limitAmount;
     private LocalDate startDate;
     private LocalDate endDate;
     private Long userId;
