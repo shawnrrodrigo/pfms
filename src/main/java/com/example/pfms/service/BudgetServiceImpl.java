@@ -61,6 +61,9 @@ public class BudgetServiceImpl implements BudgetService{
     @Override
     public BudgetResponseDTO createBudget(BudgetRequestDTO budgetRequestDTO, Long userId) {
         User user = userService.findById(userId);
+        if(!user.isActive()){
+            throw new OperationNotAllowedException("Your status is deactivated", HttpStatus.FORBIDDEN.value());
+        }
         Budget budget = new Budget();
         BeanUtils.copyProperties(budgetRequestDTO, budget);
         budget.setUser(user);
@@ -79,7 +82,9 @@ public class BudgetServiceImpl implements BudgetService{
     public BudgetResponseDTO updateBudget(Long id, BudgetRequestDTO budgetRequestDTO) {
         Budget budget = findById(id);
         User user = userService.findById(budgetRequestDTO.getUserId());
-
+        if(!user.isActive()){
+            throw new OperationNotAllowedException("Your status is deactivated", HttpStatus.FORBIDDEN.value());
+        }
         if(budgetRequestDTO.getLimitAmount() <= 0){
             throw new OperationNotAllowedException("Limit should be greater than zero", HttpStatus.BAD_REQUEST.value());
         }

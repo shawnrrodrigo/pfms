@@ -28,6 +28,9 @@ public class ExpenseServiceImpl implements ExpenseService{
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private TransactionService transactionService;
+
     public List<ExpenseResponseDTO> getAllExpenses(Long id){
         List<Expense> expenseList =  expenseRepository.findByUserId(id);
         return expenseList.stream()
@@ -49,10 +52,13 @@ public class ExpenseServiceImpl implements ExpenseService{
         return optionalExpense.orElseThrow(()-> new ResourceNotFoundException("Expense not found", HttpStatus.NOT_FOUND.value()));
     }
 
-    public Expense saveExpense(Expense expense){
-        return expenseRepository.save(expense);
+    public Expense saveExpense(Expense expense) {
+        final Expense[] savedExpense = new Expense[1];
+        transactionService.executeTransaction(() -> {
+            savedExpense[0] = expenseRepository.save(expense);
+        });
+        return savedExpense[0];
     }
-
     public void deleteExpense(Long id){
         expenseRepository.deleteById(id);
     }
@@ -61,7 +67,9 @@ public class ExpenseServiceImpl implements ExpenseService{
     public ExpenseResponseDTO updateExpense(Long id, ExpenseRequestDTO expenseRequestDTO) {
         Expense expense = getExpenseById(id);
         User user = userService.findById(expenseRequestDTO.getUserId());
-
+        if(!user.isActive()){
+            throw new OperationNotAllowedException("Your status is deactivated", HttpStatus.FORBIDDEN.value());
+        }
         if(expenseRequestDTO.getAmount() <= 0){
             throw new OperationNotAllowedException("Amount should be greater than zero", HttpStatus.BAD_REQUEST.value());
         }
@@ -111,6 +119,9 @@ public class ExpenseServiceImpl implements ExpenseService{
         }
         BeanUtils.copyProperties(expenseRequestDTO, expense);
         User user = userService.findById(userId);
+        if(!user.isActive()){
+            throw new OperationNotAllowedException("Your status is deactivated", HttpStatus.FORBIDDEN.value());
+        }
         expense.setUser(user);
         saveExpense(expense);
         ExpenseResponseDTO expenseResponseDTO = new ExpenseResponseDTO();
