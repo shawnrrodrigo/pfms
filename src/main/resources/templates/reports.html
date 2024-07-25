@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Financial Reports</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
+    <script th:src="@{/webjars/Chart.js/3.7.1/dist/Chart.min.js}"></script>
+</head>
+<body>
+<div th:replace="layout :: content">
+    <div th:fragment="content">
+        <h1>Financial Reports</h1>
+        <h2>Monthly Report</h2>
+        <canvas id="monthlyChart" width="400" height="200"></canvas>
+        <h2>Quarterly Report</h2>
+        <canvas id="quarterlyChart" width="400" height="200"></canvas>
+        <h2>Yearly Report</h2>
+        <canvas id="yearlyChart" width="400" height="200"></canvas>
+    </div>
+</div>
+
+<script>
+    var ctxMonthly = document.getElementById('monthlyChart').getContext('2d');
+    var monthlyChart = new Chart(ctxMonthly, {
+        type: 'bar',
+        data: /* th:inline="javascript" */ [[${monthlyReportData}]]
+        ,
+        options: {
+            responsive: true,
+            title: {
+                display: true,
+                text: 'Monthly Financial Report'
+            }
+        }
+    });
+
+    var ctxQuarterly = document.getElementById('quarterlyChart').getContext('2d');
+    var quarterlyChart = new Chart(ctxQuarterly, {
+        type: 'line',
+        data: /* th:inline="javascript" */ [[${quarterlyReportData}]]
+        ,
+        options: {
+            responsive: true,
+            title: {
+                display: true,
+                text: 'Quarterly Financial Report'
+            }
+        }
+    });
+
+    var ctxYearly = document.getElementById('yearlyChart').getContext('2d');
+    var yearlyChart = new Chart(ctxYearly, {
+        type: 'pie',
+        data: /* th:inline="javascript" */ [[${yearlyReportData}]]
+        ,
+        options: {
+            responsive: true,
+            title: {
+                display: true,
+                text: 'Yearly Financial Report'
+            }
+        }
+    });
+</script>
+</body>
+</html>

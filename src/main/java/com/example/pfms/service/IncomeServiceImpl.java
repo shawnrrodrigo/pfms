@@ -26,6 +26,8 @@ public class IncomeServiceImpl implements IncomeService{
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private TransactionService transactionService;
 
     public List<IncomeResponseDTO> getAllIncomes(Long id){
         User user = userService.findById(id);
@@ -54,7 +56,9 @@ public class IncomeServiceImpl implements IncomeService{
     public IncomeResponseDTO updateIncome(Long id, IncomeRequestDTO incomeRequestDTO) {
         Income income = getIncomeById(id);
         User user = userService.findById(incomeRequestDTO.getUserId());
-
+        if(!user.isActive()){
+            throw new OperationNotAllowedException("Your status is deactivated", HttpStatus.FORBIDDEN.value());
+        }
         if(incomeRequestDTO.getAmount() <= 0){
             throw new OperationNotAllowedException("Amount should be greater than zero", HttpStatus.BAD_REQUEST.value());
         }
@@ -93,7 +97,11 @@ public class IncomeServiceImpl implements IncomeService{
     }
 
     public Income saveIncome(Income income){
-        return incomeRepository.save(income);
+        final Income[] savedIncome = new Income[1];
+        transactionService.executeTransaction(() -> {
+            savedIncome[0] = incomeRepository.save(income);
+        });
+        return savedIncome[0];
     }
 
     public void deleteIncome(Long id){
@@ -119,6 +127,9 @@ public class IncomeServiceImpl implements IncomeService{
 
         BeanUtils.copyProperties(incomeRequestDTO, income);
         User user = userService.findById(userId);
+        if(!user.isActive()){
+            throw new OperationNotAllowedException("Your status is deactivated", HttpStatus.FORBIDDEN.value());
+        }
         income.setUser(user);
         saveIncome(income);
         IncomeResponseDTO incomeResponseDTO = new IncomeResponseDTO();

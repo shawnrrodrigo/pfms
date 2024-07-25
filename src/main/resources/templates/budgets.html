@@ -2,28 +2,33 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Budgets</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/5.3.0/css/bootstrap.min.css}">
 </head>
 <body>
-<a href="/budgets/new">Add New Budget</a>
-<table>
-    <thead>
-    <tr>
-        <th>Category</th>
-        <th>Limit</th>
-        <th>Start Date</th>
-        <th>End Date</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="budget : ${budgets}">
-        <td th:text="${budget.category}"></td>
-        <td th:text="${budget.limit}"></td>
-        <td th:text="${budget.startDate}"></td>
-        <td th:text="${budget.endDate}"></td>
-        <td><a th:href="@{/budgets/edit/{id}(id=${budget.id})}">Edit</a></td>
-        <td><a th:href="@{/budgets/delete/{id}(id=${budget.id})}">Delete</a></td>
-    </tr>
-    </tbody>
-</table>
+<div th:replace="layout :: content">
+    <div th:fragment="content">
+        <h1>Budgets</h1>
+        <a class="btn btn-primary" th:href="@{/budgets/new}">Add New Budget</a>
+        <table class="table mt-3">
+            <thead>
+            <tr>
+                <th>Limit</th>
+                <th>Start Date</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="budget : ${budgets}">
+                <td th:text="${budget.limit}"></td>
+                <td th:text="${budget.startDate}"></td>
+                <td>
+                    <a class="btn btn-secondary" th:href="@{/budgets/edit/{id}(id=${budget.id})}">Edit</a>
+                    <a class="btn btn-danger" th:href="@{/budgets/delete/{id}(id=${budget.id})}">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
 </body>
 </html>
